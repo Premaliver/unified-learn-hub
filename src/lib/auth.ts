@@ -70,28 +70,24 @@ export const completeRegistration = async (
   nationalId: string
 ): Promise<AuthResult> => {
   try {
-    // Create profile in our profiles table
+    // Get existing profile (created by trigger)
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .insert({
-        id: userId,
-        email,
-        full_name: fullName
-      })
-      .select()
+      .select('*')
+      .eq('id', userId)
       .single();
 
     if (profileError) throw profileError;
 
-    // // Create user role
-    // const { error: roleError } = await supabase
-    //   .from('user_roles')
-    //   .insert({
-    //     user_id
-    //     role
-    //   });
+    // Update profile with full name if needed
+    if (!profile.full_name && fullName) {
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ full_name: fullName })
+        .eq('id', userId);
 
-    // if (roleError) throw roleError;
+      if (updateError) throw updateError;
+    }
 
     // Create role-specific record
     if (role === 'institution') {
