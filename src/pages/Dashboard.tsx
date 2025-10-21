@@ -9,10 +9,10 @@ import QuickActions from "@/components/dashboard/QuickActions";
 
 const Dashboard = () => {
   const stats = [
-    { title: "Total Students", value: "12,459", change: "+12%", icon: Users, trend: "up" as const },
+    { title: "Total Students", value: "6", change: "+2", icon: Users, trend: "up" as const },
     { title: "NIRF Rank", value: "48", change: "+5 positions", icon: Award, trend: "up" as const },
-    { title: "Faculty Members", value: "856", change: "+8%", icon: GraduationCap, trend: "up" as const },
-    { title: "Active Projects", value: "127", change: "+18%", icon: Building2, trend: "up" as const },
+    { title: "Faculty Members", value: "15", change: "+3", icon: GraduationCap, trend: "up" as const },
+    { title: "Reports Generated", value: "100", change: "+15", icon: Building2, trend: "up" as const },
   ];
 
   return (
@@ -39,7 +39,9 @@ const Dashboard = () => {
         {/* Stats Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, index) => (
-            <StatsCard key={index} {...stat} />
+            <div key={index} className="animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
+              <StatsCard {...stat} />
+            </div>
           ))}
         </div>
 
@@ -105,9 +107,9 @@ const Dashboard = () => {
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {[
-              { name: "PM-USHA", beneficiaries: 245, amount: "₹12.5L", status: "Active" },
-              { name: "RUSA", beneficiaries: 180, amount: "₹8.2L", status: "Active" },
-              { name: "National Scholarship", beneficiaries: 567, amount: "₹28.4L", status: "Active" },
+              { name: "PM-USHA", beneficiaries: 2, amount: "₹1.2L", status: "Active" },
+              { name: "RUSA", beneficiaries: 1, amount: "₹0.8L", status: "Active" },
+              { name: "National Scholarship", beneficiaries: 3, amount: "₹2.4L", status: "Active" },
             ].map((scheme, index) => (
               <Card key={index} className="p-4 border-l-4 border-l-primary">
                 <h4 className="font-semibold mb-2">{scheme.name}</h4>

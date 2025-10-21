@@ -1,12 +1,12 @@
 import { ReactNode, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  LayoutDashboard, 
-  Users, 
-  FileText, 
-  BarChart3, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Users,
+  FileText,
+  BarChart3,
+  Settings,
   GraduationCap,
   Menu,
   X,
@@ -15,6 +15,8 @@ import {
   User
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { logout } from "@/lib/auth";
+import { toast } from "sonner";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -23,6 +25,13 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    logout();
+    toast.success("Signed out successfully!");
+    navigate("/auth");
+  };
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -49,11 +58,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
 
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center">
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center animate-rotate-slow group-hover:animate-glow transition-all duration-300">
               <GraduationCap className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-bold hidden sm:inline">EduUnify</span>
+            <span className="font-bold hidden sm:inline text-gradient">EduUnify</span>
           </Link>
 
           <div className="ml-auto flex items-center gap-4">
@@ -95,7 +104,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </nav>
 
             <div className="border-t pt-4">
-              <Button variant="ghost" className="w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10">
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10"
+                onClick={handleSignOut}
+              >
                 <LogOut className="h-5 w-5" />
                 Sign Out
               </Button>

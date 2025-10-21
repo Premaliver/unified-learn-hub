@@ -12,10 +12,10 @@ interface StatsCardProps {
 
 const StatsCard = ({ title, value, change, icon: Icon, trend }: StatsCardProps) => {
   return (
-    <Card className="p-6 gradient-card hover:shadow-elevated transition-all duration-300 animate-scale-in">
+    <Card className="p-6 gradient-card hover:shadow-elevated hover-lift transition-all duration-300 animate-scale-in group cursor-pointer">
       <div className="flex items-center justify-between mb-4">
-        <div className="p-2 rounded-lg bg-primary/10">
-          <Icon className="w-5 h-5 text-primary" />
+        <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+          <Icon className="w-5 h-5 text-primary group-hover:animate-pulse-slow" />
         </div>
         <div className={cn(
           "flex items-center gap-1 text-sm font-medium",
@@ -27,7 +27,7 @@ const StatsCard = ({ title, value, change, icon: Icon, trend }: StatsCardProps) 
       </div>
       <div>
         <p className="text-sm text-muted-foreground mb-1">{title}</p>
-        <p className="text-3xl font-bold">{value}</p>
+        <p className="text-3xl font-bold group-hover:text-gradient transition-all duration-300">{value}</p>
       </div>
     </Card>
   );

@@ -7,3 +7,4 @@
 - [x] Update tailwind.config.ts to include Poppins font family
 - [x] Provide complete output format: palette details, typography specs, Tailwind classes, component examples, accessibility notes
 - [x] Test the updated design in browser for responsiveness and visual appeal
+- [x] Deploy updated design to production

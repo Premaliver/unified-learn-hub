@@ -69,24 +69,36 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="gradient-hero text-primary-foreground py-20 md:py-32">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center animate-fade-in">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Unified Educational Data Management Platform
-            </h1>
-            <p className="text-lg md:text-xl mb-8 text-primary-foreground/90">
-              A single-window solution for tracking and analyzing educational institution and student data 
-              using national identification systems (AADHAR, APAR ID, AISHE codes)
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <section className="relative gradient-hero text-primary-foreground py-20 md:py-32 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full animate-float"></div>
+          <div className="absolute top-40 right-20 w-16 h-16 bg-white/10 rounded-full animate-float" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-white/10 rounded-full animate-float" style={{ animationDelay: '4s' }}></div>
+          <div className="absolute bottom-40 right-10 w-24 h-24 bg-white/10 rounded-full animate-float" style={{ animationDelay: '1s' }}></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="animate-bounce-in">
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gradient animate-text-shimmer">
+                Unified Educational Data Management Platform
+              </h1>
+            </div>
+            <div className="animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+              <p className="text-lg md:text-xl mb-8 text-primary-foreground/90">
+                A single-window solution for tracking and analyzing educational institution and student data
+                using national identification systems (AADHAR, APAR ID, AISHE codes)
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
               <Link to="/auth?mode=register">
-                <Button size="lg" variant="secondary" className="gap-2">
+                <Button size="lg" variant="secondary" className="gap-2 hover-lift animate-glow">
                   Start Your Journey <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
               <Link to="/dashboard">
-                <Button size="lg" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                <Button size="lg" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover-lift glass-effect">
                   View Demo Dashboard
                 </Button>
               </Link>
@@ -100,10 +112,10 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { label: "Institutions", value: "500+", icon: Building2 },
-              { label: "Students", value: "50K+", icon: GraduationCap },
-              { label: "Faculty Members", value: "5K+", icon: Users },
-              { label: "Reports Generated", value: "10K+", icon: FileText }
+              { label: "Institutions", value: "1", icon: Building2 },
+              { label: "Students", value: "6", icon: GraduationCap },
+              { label: "Faculty Members", value: "15", icon: Users },
+              { label: "Reports Generated", value: "100", icon: FileText }
             ].map((stat, i) => (
               <div key={i} className="text-center animate-slide-up" style={{ animationDelay: `${i * 0.1}s` }}>
                 <stat.icon className="w-8 h-8 mx-auto mb-2 text-primary" />
