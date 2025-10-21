@@ -80,7 +80,7 @@ export const completeRegistration = async (
     if (profileError) throw profileError;
 
     // Update profile with full name if needed
-    if (!profile.full_name && fullName) {
+    if (profile && !profile.full_name && fullName) {
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ full_name: fullName })
@@ -122,10 +122,10 @@ export const completeRegistration = async (
 
     return {
       success: true,
-      user: {
+      user: profile ? {
         ...profile,
         role
-      },
+      } : undefined,
       message: 'Registration completed successfully'
     };
   } catch (error: any) {
@@ -170,7 +170,7 @@ export const registerUser = async (
     if (profileError) throw profileError;
 
     // Update profile with full name if needed
-    if (!profile.full_name && fullName) {
+    if (profile && !profile.full_name && fullName) {
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ full_name: fullName })
@@ -222,10 +222,10 @@ export const registerUser = async (
 
     return {
       success: true,
-      user: {
+      user: profile ? {
         ...profile,
         role
-      },
+      } : undefined,
       message: 'User registered successfully'
     };
   } catch (error: any) {
@@ -260,16 +260,16 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
     //   .from('user_roles')
     //   .select('role')
     //   .eq('user_id', data.user.id)
-    //   .single();
+    //   .maybesingle();
 
     // if (roleError) throw roleError;
 
     return {
       success: true,
-      user: {
+      user: profile ? {
         ...profile,
         // role: roleData?.role
-      },
+      } : undefined,
       token: data.session?.access_token,
       message: 'Login successful'
     };
