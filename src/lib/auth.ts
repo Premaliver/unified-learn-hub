@@ -160,18 +160,24 @@ export const registerUser = async (
       return { success: false, message: 'Failed to create user account' };
     }
 
-    // Create profile in our profiles table
+    // Get existing profile (created by trigger)
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .insert({
-        id: authData.user.id,
-        email,
-        full_name: fullName
-      })
-      .select()
+      .select('*')
+      .eq('id', authData.user.id)
       .single();
 
     if (profileError) throw profileError;
+
+    // Update profile with full name if needed
+    if (!profile.full_name && fullName) {
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ full_name: fullName })
+        .eq('id', authData.user.id);
+
+      if (updateError) throw updateError;
+    }
 
     // Create user role
     const { error: roleError } = await supabase
