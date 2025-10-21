@@ -89,32 +89,38 @@ export const completeRegistration = async (
       if (updateError) throw updateError;
     }
 
-    // Create role-specific record
+    // Create role-specific record with upsert to handle duplicates
     if (role === 'institution') {
       const { error: institutionError } = await supabase
         .from('institutions')
-        .insert({
+        .upsert({
           user_id: userId,
           name: fullName,
           aishe_code: nationalId
+        }, {
+          onConflict: 'user_id'
         });
 
       if (institutionError) throw institutionError;
     } else if (role === 'student') {
       const { error: studentError } = await supabase
         .from('students')
-        .insert({
+        .upsert({
           user_id: userId,
           aadhar_id: nationalId
+        }, {
+          onConflict: 'user_id'
         });
 
       if (studentError) throw studentError;
     } else if (role === 'teacher') {
       const { error: teacherError } = await supabase
         .from('teachers')
-        .insert({
+        .upsert({
           user_id: userId,
           apar_id: nationalId
+        }, {
+          onConflict: 'user_id'
         });
 
       if (teacherError) throw teacherError;
@@ -179,42 +185,50 @@ export const registerUser = async (
       if (updateError) throw updateError;
     }
 
-    // Create user role
+    // Create user role with upsert to handle duplicates
     const { error: roleError } = await supabase
       .from('user_roles')
-      .insert({
+      .upsert({
         user_id: authData.user.id,
         role
+      }, {
+        onConflict: 'user_id'
       });
 
     if (roleError) throw roleError;
 
-    // Create role-specific record
+    // Create role-specific record with upsert to handle duplicates
     if (role === 'institution') {
       const { error: institutionError } = await supabase
         .from('institutions')
-        .insert({
+        .upsert({
           user_id: authData.user.id,
           name: fullName,
           aishe_code: nationalId
+        }, {
+          onConflict: 'user_id'
         });
 
       if (institutionError) throw institutionError;
     } else if (role === 'student') {
       const { error: studentError } = await supabase
         .from('students')
-        .insert({
+        .upsert({
           user_id: authData.user.id,
           aadhar_id: nationalId
+        }, {
+          onConflict: 'user_id'
         });
 
       if (studentError) throw studentError;
     } else if (role === 'teacher') {
       const { error: teacherError } = await supabase
         .from('teachers')
-        .insert({
+        .upsert({
           user_id: authData.user.id,
           apar_id: nationalId
+        }, {
+          onConflict: 'user_id'
         });
 
       if (teacherError) throw teacherError;
