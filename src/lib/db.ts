@@ -40,7 +40,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
       .from('profiles')
       .select('*')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (profileError) throw profileError;
 
@@ -48,7 +48,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     if (roleError) throw roleError;
 
@@ -68,7 +68,7 @@ export const getUserById = async (id: string): Promise<User | null> => {
       .from('profiles')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (profileError) throw profileError;
 
@@ -76,7 +76,7 @@ export const getUserById = async (id: string): Promise<User | null> => {
       .from('user_roles')
       .select('role')
       .eq('user_id', id)
-      .single();
+      .maybeSingle();
 
     if (roleError) throw roleError;
 
@@ -112,7 +112,7 @@ export const getInstitutionById = async (id: string): Promise<Institution | null
       .from('institutions')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
     return data;
@@ -128,7 +128,7 @@ export const createInstitution = async (institution: TablesInsert<'institutions'
       .from('institutions')
       .insert(institution)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
     return data;
@@ -145,7 +145,7 @@ export const updateInstitution = async (id: string, updates: TablesUpdate<'insti
       .update(updates)
       .eq('id', id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
     return data;
@@ -178,7 +178,7 @@ export const getSchemeById = async (id: string): Promise<Scheme | null> => {
       .from('schemes')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
     return data;
@@ -210,7 +210,7 @@ export const getStudentById = async (id: string): Promise<Student | null> => {
       .from('students')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
     return data;
@@ -242,7 +242,7 @@ export const getTeacherById = async (id: string): Promise<Teacher | null> => {
       .from('teachers')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
     return data;

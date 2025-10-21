@@ -75,7 +75,7 @@ export const completeRegistration = async (
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
     if (profileError) throw profileError;
 
@@ -165,7 +165,7 @@ export const registerUser = async (
       .from('profiles')
       .select('*')
       .eq('id', authData.user.id)
-      .single();
+      .maybeSingle();
 
     if (profileError) throw profileError;
 
@@ -252,7 +252,7 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
       .from('profiles')
       .select('*')
       .eq('id', data.user.id)
-      .single();
+      .maybeSingle();
 
     if (profileError) throw profileError;
 
