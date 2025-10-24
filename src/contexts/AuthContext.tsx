@@ -7,6 +7,7 @@ interface AuthContextType {
   userProfile: any;
   loading: boolean;
   setUser: (user: any) => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -14,12 +15,26 @@ const AuthContext = createContext<AuthContextType>({
   userProfile: null,
   loading: true,
   setUser: () => {},
+  logout: async () => {},
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Logout function
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      setUserProfile(null);
+      localStorage.removeItem('supabaseSession');
+      localStorage.removeItem('userRole');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
 
   // Load saved session and profile on app start
   useEffect(() => {
@@ -99,7 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, userProfile, loading, setUser }}>
+    <AuthContext.Provider value={{ user, userProfile, loading, setUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

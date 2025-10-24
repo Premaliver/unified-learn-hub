@@ -12,10 +12,14 @@ import {
   X,
   LogOut,
   Bell,
-  User
+  User,
+  BookOpen,
+  Award,
+  Building2,
+  Shield
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { logout } from "@/lib/auth";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 interface DashboardLayoutProps {
@@ -26,22 +30,58 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout, userProfile } = useAuth();
 
-  const handleSignOut = () => {
-    logout();
+  const handleSignOut = async () => {
+    await logout();
     toast.success("Signed out successfully!");
     navigate("/auth");
   };
 
-  const navigation = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Analytics", href: "/analytics", icon: BarChart3 },
-    { name: "Students", href: "/students", icon: Users },
-    { name: "Reports", href: "/reports", icon: FileText },
-    { name: "Profile", href: "/profile", icon: User },
-    { name: "Settings", href: "/settings", icon: Settings },
-  ];
+  // Role-based navigation
+  const getNavigation = () => {
+    const role = userProfile?.role;
 
+    switch (role) {
+      case 'student':
+        return [
+          { name: "Dashboard", href: "/student-dashboard", icon: LayoutDashboard },
+          { name: "My Courses", href: "/analytics", icon: BookOpen },
+          { name: "Grades", href: "/reports", icon: Award },
+          { name: "Profile", href: "/profile", icon: User },
+          { name: "Settings", href: "/settings", icon: Settings },
+        ];
+      case 'teacher':
+        return [
+          { name: "Dashboard", href: "/faculty-dashboard", icon: LayoutDashboard },
+          { name: "My Courses", href: "/analytics", icon: BookOpen },
+          { name: "Students", href: "/students", icon: Users },
+          { name: "Reports", href: "/reports", icon: FileText },
+          { name: "Profile", href: "/profile", icon: User },
+          { name: "Settings", href: "/settings", icon: Settings },
+        ];
+      case 'government':
+        return [
+          { name: "Dashboard", href: "/government-dashboard", icon: LayoutDashboard },
+          { name: "Analytics", href: "/analytics", icon: BarChart3 },
+          { name: "Institutions", href: "/students", icon: Building2 },
+          { name: "Reports", href: "/reports", icon: FileText },
+          { name: "Compliance", href: "/settings", icon: Shield },
+        ];
+      case 'institution':
+      default:
+        return [
+          { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+          { name: "Analytics", href: "/analytics", icon: BarChart3 },
+          { name: "Students", href: "/students", icon: Users },
+          { name: "Reports", href: "/reports", icon: FileText },
+          { name: "Profile", href: "/profile", icon: User },
+          { name: "Settings", href: "/settings", icon: Settings },
+        ];
+    }
+  };
+
+  const navigation = getNavigation();
   const isActive = (path: string) => location.pathname === path;
 
   return (
@@ -66,6 +106,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </Link>
 
           <div className="ml-auto flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
+              <span>Welcome,</span>
+              <span className="font-medium text-foreground capitalize">{userProfile?.role || 'User'}</span>
+            </div>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full"></span>

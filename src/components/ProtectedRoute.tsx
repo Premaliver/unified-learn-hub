@@ -13,10 +13,11 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
   // Show loading spinner while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/20">
         <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Loading your dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground text-lg">Loading your dashboard...</p>
+          <p className="text-sm text-muted-foreground">Please wait while we verify your session</p>
         </div>
       </div>
     );
@@ -30,10 +31,11 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
   // If no role yet, show loading (role is being fetched)
   if (!userProfile?.role) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/20">
         <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Loading your profile...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground text-lg">Loading your profile...</p>
+          <p className="text-sm text-muted-foreground">Fetching your role and permissions</p>
         </div>
       </div>
     );
@@ -46,7 +48,7 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
       institution: '/dashboard',
       teacher: '/faculty-dashboard',
       student: '/student-dashboard',
-      government: '/dashboard' // Default to institution dashboard for government
+      government: '/government-dashboard'
     };
 
     const redirectPath = roleRoutes[userProfile.role as keyof typeof roleRoutes] || '/dashboard';
