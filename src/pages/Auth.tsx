@@ -83,6 +83,8 @@ const Auth = () => {
           setTimeout(() => {
             if (role === 'student') {
               navigate("/student-dashboard");
+            } else if (role === 'teacher') {
+              navigate("/faculty-dashboard");
             } else {
               navigate("/dashboard");
             }
@@ -133,6 +135,8 @@ const Auth = () => {
           setTimeout(() => {
             if (user?.role === 'student') {
               navigate("/student-dashboard");
+            } else if (user?.role === 'teacher') {
+              navigate("/faculty-dashboard");
             } else {
               navigate("/dashboard");
             }

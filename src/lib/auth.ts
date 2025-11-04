@@ -270,19 +270,19 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
 
     if (profileError) throw profileError;
 
-    // const { data: roleData, error: roleError } = await supabase
-    //   .from('user_roles')
-    //   .select('role')
-    //   .eq('user_id', data.user.id)
-    //   .maybesingle();
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', data.user.id)
+      .maybeSingle();
 
-    // if (roleError) throw roleError;
+    if (roleError) throw roleError;
 
     return {
       success: true,
       user: profile ? {
         ...profile,
-        // role: roleData?.role
+        role: roleData?.role
       } : undefined,
       token: data.session?.access_token,
       message: 'Login successful'

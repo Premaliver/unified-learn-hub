@@ -1,10 +1,11 @@
-# TODO: Modern Frontend Interface Design Update
+# Fix User Role Dashboard Redirect Issue
 
-## Tasks
-- [x] Generate new sophisticated color palette (Deep Blue primary, Teal secondary, Purple accent, Neutral gray) with WCAG AA compliance
-- [x] Update typography specifications (Poppins for headings, Inter for body, weights, spacing)
-- [x] Update src/index.css with new color variables, typography styles, and enhanced gradients/shadows
-- [x] Update tailwind.config.ts to include Poppins font family
-- [x] Provide complete output format: palette details, typography specs, Tailwind classes, component examples, accessibility notes
-- [x] Test the updated design in browser for responsiveness and visual appeal
-- [x] Deploy updated design to production
+## Tasks to Complete
+
+- [x] Fix loginUser in auth.ts to return user with role
+- [x] Update Auth.tsx to navigate teacher to `/faculty-dashboard` after login/registration
+- [x] Add `/faculty-dashboard` route in App.tsx with ProtectedRoute
+- [x] Wrap dashboard routes in App.tsx with ProtectedRoute and appropriate allowedRoles
+- [x] Test login/registration navigation for all roles
+- [x] Test refresh behavior on each dashboard
+- [x] Verify ProtectedRoute redirects work correctly
