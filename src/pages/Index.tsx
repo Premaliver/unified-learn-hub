@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 import { ArrowRight, Building2, GraduationCap, Users, BarChart3, FileText, Shield, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
+  const { user } = useAuth()
   const features = [
     {
       icon: Building2,
@@ -57,9 +59,16 @@ const Index = () => {
               <span className="text-xl font-bold">EduUnify</span>
             </div>
             <div className="flex items-center gap-4">
-              <Link to="/auth">
-                <Button variant="ghost">Sign In</Button>
-              </Link>
+              {user ? (
+                <Link to="/dashboard">
+                  <Button variant="outline">Go to Dashboard</Button>
+                </Link>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="ghost">Sign In</Button>
+                </Link>
+              )
+              }
               <Link to="/auth?mode=register">
                 <Button>Get Started</Button>
               </Link>

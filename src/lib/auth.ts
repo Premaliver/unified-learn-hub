@@ -42,7 +42,7 @@ export const verifyOTP = async (email: string, otp: string): Promise<AuthResult>
     const { data, error } = await supabase.auth.verifyOtp({
       email,
       token: otp,
-      type: 'email'
+      type: 'email',
     });
 
     if (error) throw error;
@@ -88,6 +88,14 @@ export const completeRegistration = async (
 
       if (updateError) throw updateError;
     }
+
+    // CRITICAL: Create user role using the secure function that bypasses RLS
+    const { error: roleError } = await supabase.rpc('insert_user_role', {
+      p_user_id: userId,
+      p_role: role
+    });
+
+    if (roleError) throw roleError;
 
     // Create role-specific record with upsert to handle duplicates
     if (role === 'institution') {
@@ -185,15 +193,11 @@ export const registerUser = async (
       if (updateError) throw updateError;
     }
 
-    // Create user role with upsert to handle duplicates
-    const { error: roleError } = await supabase
-      .from('user_roles')
-      .upsert({
-        user_id: authData.user.id,
-        role
-      }, {
-        onConflict: 'user_id'
-      });
+    // Create user role using the secure function that bypasses RLS
+    const { error: roleError } = await supabase.rpc('insert_user_role', {
+      p_user_id: authData.user.id,
+      p_role: role
+    });
 
     if (roleError) throw roleError;
 
@@ -260,7 +264,7 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
     });
 
     if (error) throw error;
-
+    
     // Get user profile and role
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
@@ -270,19 +274,19 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
 
     if (profileError) throw profileError;
 
-    // const { data: roleData, error: roleError } = await supabase
-    //   .from('user_roles')
-    //   .select('role')
-    //   .eq('user_id', data.user.id)
-    //   .maybesingle();
+    const { data: roleData, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', data.user.id)
+      .maybeSingle();
 
-    // if (roleError) throw roleError;
+    if (roleError) throw roleError;
 
     return {
       success: true,
       user: profile ? {
         ...profile,
-        // role: roleData?.role
+        role: roleData?.role
       } : undefined,
       token: data.session?.access_token,
       message: 'Login successful'

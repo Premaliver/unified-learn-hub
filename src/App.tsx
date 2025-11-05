@@ -7,26 +7,34 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import StudentDashboard from "./pages/StudentDashboard";
+import FacultyDashboard from "./pages/FacultyDashboard";
 import Analytics from "./pages/Analytics";
 import Students from "./pages/Students";
 import Reports from "./pages/Reports";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <AuthProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/student-dashboard" element={<StudentDashboard />} />
+          <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['institution', 'government']}><Dashboard /></ProtectedRoute>} />
+          <Route path="/student-dashboard" element={<ProtectedRoute allowedRoles={['student']}><StudentDashboard /></ProtectedRoute>} />
+          <Route path="/faculty-dashboard" element={<ProtectedRoute allowedRoles={['teacher']}><FacultyDashboard /></ProtectedRoute>} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/students" element={<Students />} />
           <Route path="/reports" element={<Reports />} />
@@ -37,6 +45,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

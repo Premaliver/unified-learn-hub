@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,12 +10,14 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { loginUser, registerUser, sendOTP, verifyOTP, completeRegistration, getCurrentUser } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const initialMode = searchParams.get("mode") || "signin";
   const initialRole = searchParams.get("role") || "";
+  const { user , userProfile} = useAuth()
 
   const [mode, setMode] = useState<"signin" | "register" | "otp">(initialMode as "signin" | "register");
   const [role, setRole] = useState(initialRole);
@@ -35,6 +37,13 @@ const Auth = () => {
     { value: "teacher", label: "Teacher/Faculty", icon: Users },
     { value: "government", label: "Government Official", icon: Shield }
   ];
+
+  useEffect(()=>{
+    if(user){
+      navigate("/dashboard")
+    }
+  },[user])
+
 
   const handleSendOTP = async () => {
     if (!formData.email) {
@@ -63,6 +72,7 @@ const Auth = () => {
 
     try {
       const result = await verifyOTP(formData.email, otp);
+      console.log(result)
       if (result.success) {
         toast.success("OTP verified successfully!");
         // Now complete registration
@@ -83,6 +93,8 @@ const Auth = () => {
           setTimeout(() => {
             if (role === 'student') {
               navigate("/student-dashboard");
+            } else if (role === 'teacher') {
+              navigate("/faculty-dashboard");
             } else {
               navigate("/dashboard");
             }
@@ -100,6 +112,7 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
 
     // Form validation
     if (!formData.email || !formData.password) {
@@ -121,18 +134,20 @@ const Auth = () => {
       return;
     }
 
-    try {
-      if (mode === "signin") {
+    if (mode === "signin") {
+      try {
         const result = await loginUser(formData.email, formData.password);
         if (result.success) {
           toast.success("Signed in successfully!");
-          // Store token in localStorage
-          localStorage.setItem('auth_token', result.token!);
+          
           // Navigate based on user role
-          const user = getCurrentUser();
+          const user = await getCurrentUser();
+
           setTimeout(() => {
             if (user?.role === 'student') {
               navigate("/student-dashboard");
+            } else if (user?.role === 'teacher') {
+              navigate("/faculty-dashboard");
             } else {
               navigate("/dashboard");
             }
@@ -140,9 +155,9 @@ const Auth = () => {
         } else {
           toast.error(result.message);
         }
+      } catch (error) {
+        toast.error("An error occurred. Please try again.");
       }
-    } catch (error) {
-      toast.error("An error occurred. Please try again.");
     }
   };
 

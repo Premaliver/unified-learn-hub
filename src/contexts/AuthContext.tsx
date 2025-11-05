@@ -13,89 +13,71 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   userProfile: null,
   loading: true,
-  setUser: () => {},
+  setUser: () => { },
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [userProfile, setUserProfile] = useState(null);
+  const [user, setUser] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Load saved session and profile on app start
   useEffect(() => {
-    const loadUserData = async () => {
+    const initAuth = async () => {
+      setLoading(true);
       try {
-        // First check if we have a valid Supabase session
-        const { data: { session }, error } = await supabase.auth.getSession();
+        // ✅ First get the current session safely
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) throw sessionError;
 
-        if (session && !error) {
+        if (session?.user) {
           setUser(session.user);
-          localStorage.setItem('supabaseSession', JSON.stringify(session));
 
-          // Load user profile with role
+          // Fetch profile only if user exists
           const profile = await getCurrentUser();
           setUserProfile(profile);
-
-          // Persist role for quick access on refresh
-          if (profile?.role) {
-            localStorage.setItem('userRole', profile.role);
-          }
         } else {
-          // Check if we have cached role for immediate UI rendering
-          const cachedRole = localStorage.getItem('userRole');
-          if (cachedRole) {
-            setUserProfile({ role: cachedRole });
-          }
-
-          // No valid session, clear everything
           setUser(null);
-          if (!cachedRole) {
-            setUserProfile(null);
-          }
-          localStorage.removeItem('supabaseSession');
+          setUserProfile(null);
         }
       } catch (error) {
-        console.error('Error loading user data:', error);
-        setUser(null);
-        setUserProfile(null);
-        localStorage.removeItem('supabaseSession');
-        localStorage.removeItem('userRole');
+        console.error('Error initializing auth:', error);
       } finally {
-        // Always set loading to false
         setLoading(false);
       }
     };
 
-    loadUserData();
-  }, []);
+    initAuth();
 
-  // Listen for Supabase auth changes
-  useEffect(() => {
-    const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session);
-
-      if (event === 'SIGNED_IN' && session) {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user.id && _event === 'SIGNED_IN') {
         setUser(session.user);
-        localStorage.setItem('supabaseSession', JSON.stringify(session));
+        console.log('Auth state changed, fetching user profile.', session.user);
+        setLoading(false);
 
-        // Load user profile with role
-        const profile = await getCurrentUser();
-        setUserProfile(profile);
+        const { data: roleData, error: roleError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
 
-        // Persist role for quick access
-        if (profile?.role) {
-          localStorage.setItem('userRole', profile.role);
+        if (roleError) {
+          console.warn('Role not found for user, this may cause loading issues:', roleError);
+          // Don't throw error, return profile without role to prevent infinite loading
         }
-      } else if (event === 'SIGNED_OUT') {
+        console.log(roleData)
+        setUserProfile({
+          ...session.user,
+          role: roleData?.role
+        });
+      } else {
         setUser(null);
         setUserProfile(null);
-        localStorage.removeItem('supabaseSession');
-        localStorage.removeItem('userRole');
       }
-      setLoading(false);
     });
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   return (

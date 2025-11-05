@@ -27,10 +27,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleSignOut = () => {
-    logout();
+  const handleSignOut = async () => {
+    await logout();
     toast.success("Signed out successfully!");
-    navigate("/auth");
+    localStorage.clear()
+    navigate("/");
   };
 
   const navigation = [

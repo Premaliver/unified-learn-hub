@@ -33,7 +33,8 @@ export const testConnection = async (): Promise<boolean> => {
 // User functions
 export const getCurrentUser = async (): Promise<User | null> => {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error) throw error;
     if (!user) return null;
 
     const { data: profile, error: profileError } = await supabase
@@ -50,7 +51,10 @@ export const getCurrentUser = async (): Promise<User | null> => {
       .eq('user_id', user.id)
       .maybeSingle();
 
-    if (roleError) throw roleError;
+    if (roleError) {
+      console.warn('Role not found for user, this may cause loading issues:', roleError);
+      // Don't throw error, return profile without role to prevent infinite loading
+    }
 
     return {
       ...profile,
