@@ -89,7 +89,6 @@ export const completeRegistration = async (
       if (updateError) throw updateError;
     }
 
-<<<<<<< HEAD
     // CRITICAL: Create user role using the secure function that bypasses RLS
     const { error: roleError } = await supabase.rpc('insert_user_role', {
       p_user_id: userId,
@@ -97,25 +96,6 @@ export const completeRegistration = async (
     });
 
     if (roleError) throw roleError;
-=======
-    // CRITICAL: Create user role - check if exists first, then insert
-    const { data: existingRole } = await supabase
-      .from('user_roles')
-      .select('id')
-      .eq('user_id', userId)
-      .maybeSingle();
-
-    if (!existingRole) {
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: userId,
-          role
-        });
-
-      if (roleError) throw roleError;
-    }
->>>>>>> c6775f1a534af44d0cb78a1cb5c3e710ef9841f0
 
     // Create role-specific record with upsert to handle duplicates
     if (role === 'institution') {
@@ -213,22 +193,13 @@ export const registerUser = async (
       if (updateError) throw updateError;
     }
 
-<<<<<<< HEAD
     // Create user role using the secure function that bypasses RLS
     const { error: roleError } = await supabase.rpc('insert_user_role', {
       p_user_id: authData.user.id,
       p_role: role
     });
-=======
-    // Create user role - check if exists first, then insert
-    const { data: existingRole } = await supabase
-      .from('user_roles')
-      .select('id')
-      .eq('user_id', authData.user.id)
-      .maybeSingle();
->>>>>>> c6775f1a534af44d0cb78a1cb5c3e710ef9841f0
 
-    if (!existingRole) {
+    if (!roleError) {
       const { error: roleError } = await supabase
         .from('user_roles')
         .insert({
@@ -302,7 +273,7 @@ export const loginUser = async (email: string, password: string): Promise<AuthRe
     });
 
     if (error) throw error;
-    
+
     // Get user profile and role
     const { data: profile, error: profileError } = await supabase
       .from('profiles')

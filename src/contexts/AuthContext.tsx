@@ -34,27 +34,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           // Fetch profile only if user exists
           const profile = await getCurrentUser();
-<<<<<<< HEAD
           setUserProfile(profile);
         } else {
           setUser(null);
           setUserProfile(null);
-=======
-          
-          if (profile) {
-            setUserProfile(profile);
-            // Persist role for quick access on refresh
-            if (profile.role) {
-              localStorage.setItem('userRole', profile.role);
-            }
-          }
-        } else {
-          // No valid session, clear everything
-          setUser(null);
-          setUserProfile(null);
-          localStorage.removeItem('supabaseSession');
-          localStorage.removeItem('userRole');
->>>>>>> c6775f1a534af44d0cb78a1cb5c3e710ef9841f0
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
