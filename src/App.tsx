@@ -8,7 +8,6 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import StudentDashboard from "./pages/StudentDashboard";
 import FacultyDashboard from "./pages/FacultyDashboard";
-import FacultyDashboard from "./pages/FacultyDashboard";
 import Analytics from "./pages/Analytics";
 import Students from "./pages/Students";
 import Reports from "./pages/Reports";
