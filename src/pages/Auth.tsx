@@ -130,12 +130,11 @@ const Auth = () => {
           toast.success("Signed in successfully!");
           // Store token in localStorage
           localStorage.setItem('auth_token', result.token!);
-          // Navigate based on user role
-          const user = getCurrentUser();
+          // Navigate based on user role from the login result
           setTimeout(() => {
-            if (user?.role === 'student') {
+            if (result.user?.role === 'student') {
               navigate("/student-dashboard");
-            } else if (user?.role === 'teacher') {
+            } else if (result.user?.role === 'teacher') {
               navigate("/faculty-dashboard");
             } else {
               navigate("/dashboard");

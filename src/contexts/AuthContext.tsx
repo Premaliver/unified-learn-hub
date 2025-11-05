@@ -34,25 +34,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           // Load user profile with role
           const profile = await getCurrentUser();
-          setUserProfile(profile);
-
-          // Persist role for quick access on refresh
-          if (profile?.role) {
-            localStorage.setItem('userRole', profile.role);
+          
+          if (profile) {
+            setUserProfile(profile);
+            // Persist role for quick access on refresh
+            if (profile.role) {
+              localStorage.setItem('userRole', profile.role);
+            }
           }
         } else {
-          // Check if we have cached role for immediate UI rendering
-          const cachedRole = localStorage.getItem('userRole');
-          if (cachedRole) {
-            setUserProfile({ role: cachedRole });
-          }
-
           // No valid session, clear everything
           setUser(null);
-          if (!cachedRole) {
-            setUserProfile(null);
-          }
+          setUserProfile(null);
           localStorage.removeItem('supabaseSession');
+          localStorage.removeItem('userRole');
         }
       } catch (error) {
         console.error('Error loading user data:', error);
