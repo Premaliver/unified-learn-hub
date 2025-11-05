@@ -139,24 +139,14 @@ const Auth = () => {
         const result = await loginUser(formData.email, formData.password);
         if (result.success) {
           toast.success("Signed in successfully!");
-<<<<<<< HEAD
           
           // Navigate based on user role
           const user = await getCurrentUser();
 
-=======
-          // Store token in localStorage
-          localStorage.setItem('auth_token', result.token!);
-          // Navigate based on user role from the login result
->>>>>>> c6775f1a534af44d0cb78a1cb5c3e710ef9841f0
           setTimeout(() => {
             if (result.user?.role === 'student') {
               navigate("/student-dashboard");
-<<<<<<< HEAD
             } else if (user?.role === 'teacher') {
-=======
-            } else if (result.user?.role === 'teacher') {
->>>>>>> c6775f1a534af44d0cb78a1cb5c3e710ef9841f0
               navigate("/faculty-dashboard");
             } else {
               navigate("/dashboard");
