@@ -89,17 +89,23 @@ export const completeRegistration = async (
       if (updateError) throw updateError;
     }
 
-    // CRITICAL: Create user role first
-    const { error: roleError } = await supabase
+    // CRITICAL: Create user role - check if exists first, then insert
+    const { data: existingRole } = await supabase
       .from('user_roles')
-      .upsert({
-        user_id: userId,
-        role
-      }, {
-        onConflict: 'user_id,role'
-      });
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-    if (roleError) throw roleError;
+    if (!existingRole) {
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: userId,
+          role
+        });
+
+      if (roleError) throw roleError;
+    }
 
     // Create role-specific record with upsert to handle duplicates
     if (role === 'institution') {
@@ -197,17 +203,23 @@ export const registerUser = async (
       if (updateError) throw updateError;
     }
 
-    // Create user role with upsert to handle duplicates
-    const { error: roleError } = await supabase
+    // Create user role - check if exists first, then insert
+    const { data: existingRole } = await supabase
       .from('user_roles')
-      .upsert({
-        user_id: authData.user.id,
-        role
-      }, {
-        onConflict: 'user_id'
-      });
+      .select('id')
+      .eq('user_id', authData.user.id)
+      .maybeSingle();
 
-    if (roleError) throw roleError;
+    if (!existingRole) {
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: authData.user.id,
+          role
+        });
+
+      if (roleError) throw roleError;
+    }
 
     // Create role-specific record with upsert to handle duplicates
     if (role === 'institution') {
