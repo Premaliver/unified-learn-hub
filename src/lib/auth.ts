@@ -89,6 +89,18 @@ export const completeRegistration = async (
       if (updateError) throw updateError;
     }
 
+    // CRITICAL: Create user role first
+    const { error: roleError } = await supabase
+      .from('user_roles')
+      .upsert({
+        user_id: userId,
+        role
+      }, {
+        onConflict: 'user_id,role'
+      });
+
+    if (roleError) throw roleError;
+
     // Create role-specific record with upsert to handle duplicates
     if (role === 'institution') {
       const { error: institutionError } = await supabase
