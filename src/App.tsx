@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import StudentDashboard from "./pages/StudentDashboard";
 import FacultyDashboard from "./pages/FacultyDashboard";
+import FacultyDashboard from "./pages/FacultyDashboard";
 import Analytics from "./pages/Analytics";
 import Students from "./pages/Students";
 import Reports from "./pages/Reports";
@@ -29,9 +30,16 @@ const App = () => (
         v7_startTransition: true,
         v7_relativeSplatPath: true,
       }}>
+      <BrowserRouter future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['institution', 'government']}><Dashboard /></ProtectedRoute>} />
+          <Route path="/student-dashboard" element={<ProtectedRoute allowedRoles={['student']}><StudentDashboard /></ProtectedRoute>} />
+          <Route path="/faculty-dashboard" element={<ProtectedRoute allowedRoles={['teacher']}><FacultyDashboard /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['institution', 'government']}><Dashboard /></ProtectedRoute>} />
           <Route path="/student-dashboard" element={<ProtectedRoute allowedRoles={['student']}><StudentDashboard /></ProtectedRoute>} />
           <Route path="/faculty-dashboard" element={<ProtectedRoute allowedRoles={['teacher']}><FacultyDashboard /></ProtectedRoute>} />
